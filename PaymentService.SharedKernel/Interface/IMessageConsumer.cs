@@ -8,6 +8,6 @@ namespace PaymentService.SharedKernel.Interface
 {
 	public interface IMessageConsumer
 	{
-		Task StartConsumeAsync();
+		Task<string> StartConsumeAsync();
 	}
 }

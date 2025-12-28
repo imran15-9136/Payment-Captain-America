@@ -12,19 +12,21 @@ namespace PaymentService.Infrastructure.Implementation
 	public class MessageConsumer : IMessageConsumer
 	{
 		private const string QueueName = "CaptainAmerica-CA.Payment.queue";
-		public async Task StartConsumeAsync()
+		public async Task<string> StartConsumeAsync()
 		{
 			using var connection = await RabbitMqConnection.CreateConnectionAsync();
 			using var channel = await connection.CreateChannelAsync();
 			var consumer = new AsyncEventingBasicConsumer(channel);
 
+			string message = string.Empty;
 
 			consumer.ReceivedAsync += async (sender, args) =>
 			{
 				var body = args.Body.ToArray();
-				var message = Encoding.UTF8.GetString(body);
+				message = Encoding.UTF8.GetString(body);
 
 				Console.WriteLine($"[x] Received: {message}");
+
 
 				await Task.CompletedTask;
 			};
@@ -34,6 +36,7 @@ namespace PaymentService.Infrastructure.Implementation
 				autoAck: true,
 				consumer: consumer);
 
+			return message;
 			Console.WriteLine("Consumer started. Press [Enter] to exit.");
 			Console.ReadLine();
 		}

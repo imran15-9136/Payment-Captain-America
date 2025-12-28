@@ -25,7 +25,8 @@ namespace PaymentService.Infrastructure.Implementation
 				autoDelete: false,
 				arguments: null);
 
-			var json = JsonSerializer.Serialize(messege);
+			//var json = JsonSerializer.Serialize(messege);
+			var json = JsonSerializer.Serialize(messege, messege.GetType());
 			var body = Encoding.UTF8.GetBytes(json);
 
 

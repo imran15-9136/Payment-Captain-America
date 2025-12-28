@@ -12,6 +12,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddSingleton<IMessageConsumer, MessageConsumer>();
 builder.Services.AddTransient<ICommandHandler, CommandHandler>();
+builder.Services.AddTransient<IRepository, Repository>();
 
 builder.Services.AddHostedService<CommandWorker>();
 
