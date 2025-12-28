@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PaymentService.Infrastructure.Implementation
+namespace PaymentService.Infrastructure.Configuration
 {
 	internal class RabbitMqConnection
 	{

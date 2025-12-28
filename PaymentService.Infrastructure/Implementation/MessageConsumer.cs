@@ -1,4 +1,5 @@
-﻿using PaymentService.SharedKernel.Interface;
+﻿using PaymentService.Infrastructure.Configuration;
+using PaymentService.SharedKernel.Interface;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -12,7 +13,7 @@ namespace PaymentService.Infrastructure.Implementation
 	public class MessageConsumer : IMessageConsumer
 	{
 		private const string QueueName = "CaptainAmerica-CA.Payment.queue";
-		public async Task<string> StartConsumeAsync()
+		public async Task<string> StartConsumingAsync()
 		{
 			using var connection = await RabbitMqConnection.CreateConnectionAsync();
 			using var channel = await connection.CreateChannelAsync();

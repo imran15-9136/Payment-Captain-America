@@ -14,7 +14,7 @@ namespace PaymentCommendWorkerHost
 		{
 			try
 			{
-				await commandHandler.HandleAsync();
+				await commandHandler.HandleAsync(stoppingToken);
 			}
 			catch (Exception ex)
 			{

@@ -1,4 +1,5 @@
-﻿using PaymentService.SharedKernel.Interface;
+﻿using MongoDB.Driver;
+using PaymentService.SharedKernel.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace PaymentService.Infrastructure.Implementation
 {
 	public class Repository : IRepository
 	{
+		private readonly IMongoCollection<PaymentAgg> _collection;
 		public Task AddAsync<T>(T entity) where T : class
 		{
 			throw new NotImplementedException();

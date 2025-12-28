@@ -1,4 +1,5 @@
-﻿using PaymentService.SharedKernel.Dto;
+﻿using PaymentService.Infrastructure.Configuration;
+using PaymentService.SharedKernel.Dto;
 using PaymentService.SharedKernel.Interface;
 using RabbitMQ.Client;
 using System;
@@ -13,46 +14,54 @@ namespace PaymentService.Infrastructure.Implementation
 	public class RabbitMqBus : IServiceBus
 	{
 		private const string QueueName = "CaptainAmerica-CA.Payment.queue";
-		public async Task PublishAsync(IPaymentRequestCommand messege)
+		public async Task PublishAsync(IPaymentRequestCommand message)
 		{
-			using var connection = await RabbitMqConnection.CreateConnectionAsync();
-			using var channel = await connection.CreateChannelAsync();
-
-			await channel.QueueDeclareAsync(
-				queue: QueueName,
-				durable: true,
-				exclusive: false,
-				autoDelete: false,
-				arguments: null);
-
-			//var json = JsonSerializer.Serialize(messege);
-			var json = JsonSerializer.Serialize(messege, messege.GetType());
-			var body = Encoding.UTF8.GetBytes(json);
-
-
-			var properties = new BasicProperties
+			try
 			{
-				Persistent = true   // ensures message durability
-			};
+				using var connection = await RabbitMqConnection.CreateConnectionAsync();
+				using var channel = await connection.CreateChannelAsync();
 
-			await channel.ExchangeDeclareAsync(
-					exchange: "payment.exchange",
-					type: ExchangeType.Direct,
-					durable: true,
-					autoDelete: false);
-
-			await channel.QueueBindAsync(
+				await channel.QueueDeclareAsync(
 					queue: QueueName,
+					durable: true,
+					exclusive: false,
+					autoDelete: false,
+					arguments: null);
+
+				//var json = JsonSerializer.Serialize(messege);
+				var json = JsonSerializer.Serialize(message, message.GetType());
+				var body = Encoding.UTF8.GetBytes(json);
+
+
+				var properties = new BasicProperties
+				{
+					Persistent = true   // ensures message durability
+				};
+
+				await channel.ExchangeDeclareAsync(
+						exchange: "payment.exchange",
+						type: ExchangeType.Direct,
+						durable: true,
+						autoDelete: false);
+
+				await channel.QueueBindAsync(
+						queue: QueueName,
+						exchange: "payment.exchange",
+						routingKey: QueueName);
+
+
+				await channel.BasicPublishAsync(
 					exchange: "payment.exchange",
-					routingKey: QueueName);
+					routingKey: QueueName,
+					mandatory: true,
+					basicProperties: properties,
+					body: body);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error publishing message: {ex.Message}");
 
-
-			await channel.BasicPublishAsync(
-				exchange: "payment.exchange",
-				routingKey: QueueName,
-				mandatory: true,
-				basicProperties: properties,
-				body: body);
+			}
 		}
 	}
 }

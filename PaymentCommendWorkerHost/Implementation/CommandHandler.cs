@@ -9,9 +9,21 @@ namespace PaymentCommendWorkerHost.Implementation
 {
 	internal class CommandHandler(IMessageConsumer _messageConsumer) : ICommandHandler
 	{
-		public async Task HandleAsync()
+		public async Task HandleAsync(CancellationToken cancellationToken = default)
 		{
-			var message = await _messageConsumer.StartConsumeAsync();
+			try
+			{
+				while (!cancellationToken.IsCancellationRequested)
+				{
+					var message = await _messageConsumer.StartConsumingAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				await Task.Delay(5000, cancellationToken);
+			}
+
+			
 		}
 	}
 }

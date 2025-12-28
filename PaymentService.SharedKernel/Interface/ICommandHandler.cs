@@ -8,6 +8,6 @@ namespace PaymentService.SharedKernel.Interface
 {
 	public interface ICommandHandler
 	{
-		Task HandleAsync();
+		Task HandleAsync(CancellationToken cancellationToken);
 	}
 }
