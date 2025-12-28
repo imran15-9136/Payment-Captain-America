@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace PaymentService.SharedKernel.Interface
 {
-	internal interface IMessageConsumer
+	public interface IMessageConsumer
 	{
+		Task StartConsumeAsync();
 	}
 }
